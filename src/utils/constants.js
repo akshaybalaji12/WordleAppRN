@@ -19,3 +19,16 @@ export const Colors = {
     outline: "#5e666a"
 
 }
+
+export const ACTION_TYPES = {
+    gameStatus: "GAME_STATUS",
+    setSolution: "SET_SOLUTION",
+    setRow: "SET_CURRENT_ROW",
+    setGuesses: "SET_GUESSES",
+    addCorrectLetter: "ADD_CORRECT_LETTER",
+    addIncorrectLetter: "ADD_INCORRECT_LETTER",
+    addWrongLetter: "ADD_WRONG_LETTER",
+    addGuess: "ADD_GUESS",
+    removeGuess: "REMOVE_GUESS",
+    isInvalid: "SET_INVALID_GUESS"
+}

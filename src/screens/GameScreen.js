@@ -1,10 +1,12 @@
 import React from "react";
 import { View, StatusBar, StyleSheet, Text } from "react-native";
+import { connect } from "react-redux";
+import * as actions from '../actions';
 
 import { Colors } from "../utils/constants";
-import { GameKeyboard } from "../components/GameKeyboard";
+import GameComponent from "../components/GameComponent";
 
-export default class GameScreen extends React.Component {
+class GameScreen extends React.Component {
 
     constructor(props) {
         super(props);
@@ -14,14 +16,17 @@ export default class GameScreen extends React.Component {
 
     }
 
+    componentDidMount = () => {
+    }
+
     render() {
 
         return (
 
             <View style={styles.container}>
                 <StatusBar backgroundColor={Colors.background} />
-                <Text style={styles.heading}>Wordle</Text>
-                <GameKeyboard />
+                <Text style={styles.heading}>WORDLE</Text>
+                <GameComponent />
             </View>
 
         )
@@ -30,6 +35,18 @@ export default class GameScreen extends React.Component {
 
 }
 
+function mapStateToProps(state) {
+    return {
+        guesses: state.gameStateReducer.guesses,
+        currentRow: state.gameStateReducer.currentRow
+    };
+}
+
+export default connect(
+    mapStateToProps,
+    actions
+)(GameScreen);
+
 
 const styles = StyleSheet.create({
     
@@ -37,16 +54,16 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: Colors.background,
         flexDirection: 'column',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         alignItems: 'center',
     },
 
     heading: {
         color: Colors.white,
-        fontSize: 20,
+        fontSize: 30,
         fontFamily: 'ProductSansBold',
         textAlign: 'center',
         margin: 10
-    }
+    },
 
 })

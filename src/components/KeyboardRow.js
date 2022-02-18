@@ -1,25 +1,43 @@
 import React from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { connect } from "react-redux";
+import * as actions from '../actions';
+
 import { width, height } from '../utils/constants';
 import { Colors } from "../utils/constants";
 
-const KeyboardKeys = (props) => {
+const KeyboardRow = (props) => {
 
-    let keyFontSize = (props.value === 'enter' | props.value === 'delete') ? 12 : 18;
-    let keyWidth = (props.value === 'enter' | props.value === 'delete') ? 65 : 40;
-    console.log(props.value);
+    const backspaceIcon = require('../../img/backspace_white.png');
 
-    return (
+    const onKeyPressed = (letter) => {
 
-        <TouchableOpacity style={[styles.keyboardKey, { width: keyWidth }]}>
-            <Text style={[styles.keyboardFont, { fontSize: keyFontSize }]}>{props.value.toUpperCase()}</Text>
-        </TouchableOpacity>
+        let payload = {
+            rowId: props.currentRow,
+            value: letter
+        }
 
-    )
+        let currentGuesses = props.guesses;
 
-}
+        if(letter === 'delete') {
 
-export const KeyboardRow = (props) => {
+            if(currentGuesses[props.currentRow].length > 0){
+                props.removeGuess(payload);
+            }
+
+        } else if(letter === 'enter') {
+
+            props.onEnterPressed();
+
+        } else {
+            
+            if(currentGuesses[props.currentRow].length < 5){
+                props.addGuess(payload);
+            }
+
+        }
+
+    }
 
     return (
 
@@ -27,8 +45,28 @@ export const KeyboardRow = (props) => {
 
             {props.rowItems.map((key, index) => {
 
+                let keyFontSize = (key === 'enter') ? 16 : 18;
+                let keyWidth = (key === 'enter' || key === 'delete') ? 65 : 40;
+                let keyColor = Colors.keyboardDefault;
+
+                if(props.correctLetters.includes(key))
+                    keyColor = Colors.correctGuess;
+                
+                if(props.incorrectLetters.includes(key))
+                    keyColor = Colors.incorrectGuess;
+
+                if(props.wrongLetters.includes(key))
+                    keyColor = Colors.wrongGuess;
+
                 return (
-                    <KeyboardKeys key={index} value={key} />
+                    
+                        <TouchableOpacity onPress={() => onKeyPressed(key)} disabled={false} key={index} style={[styles.keyboardKey, { width: keyWidth, backgroundColor: keyColor }]}>
+                            {key === 'delete' ? 
+                            <Image source={backspaceIcon} style={[styles.backspaceImage, { width: keyWidth - 40 }]}/> :
+                            <Text style={[styles.keyboardFont, { fontSize: keyFontSize }]}>{key}</Text>
+                            }
+                        </TouchableOpacity>
+
                 )
 
             })}
@@ -38,6 +76,22 @@ export const KeyboardRow = (props) => {
     )
 
 }
+
+function mapStateToProps(state) {
+    return {
+        guesses: state.gameStateReducer.guesses,
+        currentRow: state.gameStateReducer.currentRow,
+        correctLetters: state.gameStateReducer.correctLetters,
+        incorrectLetters: state.gameStateReducer.incorrectLetters,
+        wrongLetters: state.gameStateReducer.wrongLetters,
+        isInvalidGuess: state.gameStateReducer.isInvalidGuess
+    };
+}
+
+export default connect(
+    mapStateToProps,
+    actions
+)(KeyboardRow);
 
 const styles = StyleSheet.create({
 
@@ -52,7 +106,7 @@ const styles = StyleSheet.create({
 
     keyboardKey: {
         justifyContent: 'center',
-        backgroundColor: Colors.keyboardDefault,
+        alignItems: 'center',
         height: (height / 15) - 10,
         borderRadius: 5,
         margin: 4
@@ -61,7 +115,15 @@ const styles = StyleSheet.create({
     keyboardFont: {
         fontFamily: 'ProductSans',
         color: Colors.white,
-        textAlign: 'center'
+        textAlign: 'center',
+        textTransform: 'uppercase'
+    },
+
+    backspaceImage: {
+        height: (height / 15) - 30,
+        padding: 5,
+        resizeMode: 'contain',
+        marginEnd: 5
     }
 
 })
