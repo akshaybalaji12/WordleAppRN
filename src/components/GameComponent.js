@@ -10,13 +10,68 @@ import KeyboardRow from './KeyboardRow';
 
 const GameComponent = (props) => {
 
-    let isVisible = props.isInvalidGuess;
+    let isInvalidGUess = props.isInvalidGuess;
+    let isChancesOver = props.currentRow > 5 && !props.isGameOver;
 
     const onEnterPressed = () => {
 
         if(props.guesses[props.currentRow].length < 5) {
             props.setInvalidGuess(true);
+        } else {
+            checkGuess();
         }
+
+    }
+
+    const checkGuess = () => {
+
+        let guessLetters = props.guesses[props.currentRow];
+        let guessStatus = [-1, -1, -1, -1, -1];
+        let solution = props.solution.split('');
+
+        if(props.solution === guessLetters.join("")) {
+            guessStatus = [1,1,1,1,1];
+            props.setGuessStatus(props.currentRow, guessStatus);
+            props.setCurrentRow(props.currentRow + 1);
+            props.setGameStatus(true);
+        }
+
+        for(let i=0; i<5; i++) {
+            if(solution[i] === guessLetters[i]) {
+                guessStatus[i] = 1;
+                props.addCorrectLetter(guessLetters[i]);
+                solution[i] = "";
+            }
+        }
+
+        props.guesses[props.currentRow].forEach((letter, index) => {
+            
+            let correctIndex = props.correctLetters.indexOf(letter);
+            let incorrectIndex = props.incorrectLetters.indexOf(letter);
+            let position = solution.indexOf(letter);
+
+            if(position === -1) {
+
+                if(correctIndex === -1 && incorrectIndex === -1) {
+                    props.addWrongLetter(letter);
+                }
+
+            } else if(position === index) {
+
+                //Do nothing
+
+            } else {
+
+                guessStatus[index] = 0;
+                props.addIncorrectLetter(letter);
+                solution[position] = "";
+
+            }
+
+        });
+        
+        props.setGuessStatus(props.currentRow, guessStatus);
+        props.setCurrentRow(props.currentRow + 1);
 
     }
 
@@ -31,9 +86,14 @@ const GameComponent = (props) => {
                 <WordRow rowId={4} />
                 <WordRow rowId={5} />
             </View>
-            {isVisible ? 
-            <View style={styles.solutionView}>
+            {isInvalidGUess ? 
+            <View style={styles.errorView}>
                 <Text style={styles.solutionText}>Not enough letters!</Text>
+            </View> 
+            : null}
+            {isChancesOver ? 
+            <View style={styles.solutionView}>
+                <Text style={styles.solutionText}>The solution is {props.solution.toUpperCase()}</Text>
             </View> 
             : null}
             <View style={styles.keyboardContainer}>
@@ -51,11 +111,12 @@ const GameComponent = (props) => {
 
 function mapStateToProps(state) {
     return {
+        isGameOver: state.gameStateReducer.isGameOver,
+        solution: state.gameStateReducer.solution,
         guesses: state.gameStateReducer.guesses,
         currentRow: state.gameStateReducer.currentRow,
         correctLetters: state.gameStateReducer.correctLetters,
         incorrectLetters: state.gameStateReducer.incorrectLetters,
-        wrongLetters: state.gameStateReducer.wrongLetters,
         isInvalidGuess: state.gameStateReducer.isInvalidGuess
     };
 }
@@ -82,13 +143,20 @@ const styles = StyleSheet.create({
         marginTop: 50
     },
 
-    solutionView: {
+    errorView: {
         margin: 5,
         padding: 15,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: Colors.outline,
         borderRadius: 5
+    },
+
+    solutionView: {
+        margin: 5,
+        padding: 15,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 
     solutionText: {

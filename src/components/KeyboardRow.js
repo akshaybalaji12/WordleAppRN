@@ -21,8 +21,12 @@ const KeyboardRow = (props) => {
 
         if(letter === 'delete') {
 
-            if(currentGuesses[props.currentRow].length > 0){
-                props.removeGuess(payload);
+            try {
+                if(currentGuesses[props.currentRow].length > 0){
+                    props.removeGuess(payload);
+                }
+            } catch (error) {
+                console.log('Index error');
             }
 
         } else if(letter === 'enter') {
@@ -31,8 +35,12 @@ const KeyboardRow = (props) => {
 
         } else {
             
-            if(currentGuesses[props.currentRow].length < 5){
-                props.addGuess(payload);
+            try {
+                if(currentGuesses[props.currentRow].length < 5){
+                    props.addGuess(payload);
+                }
+            } catch (error) {
+                console.log('Index error');
             }
 
         }
@@ -48,19 +56,20 @@ const KeyboardRow = (props) => {
                 let keyFontSize = (key === 'enter') ? 16 : 18;
                 let keyWidth = (key === 'enter' || key === 'delete') ? 65 : 40;
                 let keyColor = Colors.keyboardDefault;
+                let isDisabled = false;
 
-                if(props.correctLetters.includes(key))
+                if(props.correctLetters.includes(key)){
                     keyColor = Colors.correctGuess;
-                
-                if(props.incorrectLetters.includes(key))
+                } else if(props.incorrectLetters.includes(key)) {
                     keyColor = Colors.incorrectGuess;
-
-                if(props.wrongLetters.includes(key))
+                } else if(props.wrongLetters.includes(key)) {
+                    isDisabled = true;
                     keyColor = Colors.wrongGuess;
-
+                }
+                
                 return (
                     
-                        <TouchableOpacity onPress={() => onKeyPressed(key)} disabled={false} key={index} style={[styles.keyboardKey, { width: keyWidth, backgroundColor: keyColor }]}>
+                        <TouchableOpacity onPress={() => onKeyPressed(key)} disabled={isDisabled} key={index} style={[styles.keyboardKey, { width: keyWidth, backgroundColor: keyColor }]}>
                             {key === 'delete' ? 
                             <Image source={backspaceIcon} style={[styles.backspaceImage, { width: keyWidth - 40 }]}/> :
                             <Text style={[styles.keyboardFont, { fontSize: keyFontSize }]}>{key}</Text>

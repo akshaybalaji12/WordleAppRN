@@ -14,7 +14,11 @@ export const Colors = {
     correctGuess: "#42713e",
     incorrectGuess: "#917f2f",
     wrongGuess: "#2c3032",
+    correctGuessRGB: "rgb(66,113,62)",
+    incorrectGuessRGB: "rgb(145,127,47)",
+    wrongGuessRGB: "rgb(44,48,50)",
     background: "#0e0f10",
+    backgroundRGB: "rgb(14,15,16)",
     keyboardDefault: "#5e666a",
     outline: "#5e666a"
 
@@ -24,11 +28,12 @@ export const ACTION_TYPES = {
     gameStatus: "GAME_STATUS",
     setSolution: "SET_SOLUTION",
     setRow: "SET_CURRENT_ROW",
-    setGuesses: "SET_GUESSES",
+    setGuessStatus: "SET_GUESS_STATUS",
     addCorrectLetter: "ADD_CORRECT_LETTER",
     addIncorrectLetter: "ADD_INCORRECT_LETTER",
     addWrongLetter: "ADD_WRONG_LETTER",
     addGuess: "ADD_GUESS",
     removeGuess: "REMOVE_GUESS",
-    isInvalid: "SET_INVALID_GUESS"
+    isInvalid: "SET_INVALID_GUESS",
+    clearState: "CLEAR_STATE"
 }

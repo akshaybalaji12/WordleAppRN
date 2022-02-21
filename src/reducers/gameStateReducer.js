@@ -8,6 +8,9 @@ const INITIAL_STATE = {
     guesses: [
         [], [], [], [], [], []
     ],
+    guessStatus: [
+        [], [], [], [], [], []
+    ],
     correctLetters: [],
     incorrectLetters: [],
     wrongLetters: [],
@@ -37,10 +40,14 @@ export default function(state = INITIAL_STATE, action) {
                 currentRow: action.payload
             }
 
-        case ACTION_TYPES.setGuesses:
+        case ACTION_TYPES.setGuessStatus:
+
+            let guessStatus = [...state.guessStatus];
+            guessStatus[action.payload.rowId] = action.payload.guessStatus;
+
             return {
                 ...state,
-                guesses: action.payload
+                guessStatus
             }
 
         case ACTION_TYPES.addGuess:
@@ -66,7 +73,7 @@ export default function(state = INITIAL_STATE, action) {
         case ACTION_TYPES.addCorrectLetter:
 
             let correctLetters = [...state.correctLetters];
-            correctLetters.push(payload);
+            correctLetters.push(action.payload);
 
             return {
                 ...state,
@@ -76,7 +83,7 @@ export default function(state = INITIAL_STATE, action) {
         case ACTION_TYPES.addIncorrectLetter:
 
             let incorrectLetters = [...state.incorrectLetters];
-            incorrectLetters.push(payload);
+            incorrectLetters.push(action.payload);
 
             return {
                 ...state,
@@ -86,7 +93,7 @@ export default function(state = INITIAL_STATE, action) {
         case ACTION_TYPES.addWrongLetter:
 
             let wrongLetters = [...state.wrongLetters];
-            wrongLetters.push(payload);
+            wrongLetters.push(action.payload);
 
             return {
                 ...state,
@@ -100,6 +107,10 @@ export default function(state = INITIAL_STATE, action) {
                 isInvalidGuess: action.payload
             }
 
+        case ACTION_TYPES.clearState:
+
+            return INITIAL_STATE
+            
         default:
             return state;
 

@@ -37,9 +37,9 @@ export const addWrongLetter = (wrongLetter) => {
 
 }
 
-export const setGuesses = (guesses) => {
+export const setGuessStatus = (rowId, guessStatus) => {
 
-    return { type: ACTION_TYPES.setGuesses, payload: guesses };
+    return { type: ACTION_TYPES.setGuessStatus, payload: { rowId: rowId, guessStatus: guessStatus } };
 
 }
 
@@ -58,5 +58,11 @@ export const removeGuess = (payload) => {
 export const setInvalidGuess = (isInvalid) => {
 
     return { type: ACTION_TYPES.isInvalid, payload: isInvalid };
+
+}
+
+export const clearState = () => {
+
+    return { type: ACTION_TYPES.clearState, payload: null };
 
 }
