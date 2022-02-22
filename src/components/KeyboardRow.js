@@ -56,20 +56,18 @@ const KeyboardRow = (props) => {
                 let keyFontSize = (key === 'enter') ? 16 : 18;
                 let keyWidth = (key === 'enter' || key === 'delete') ? 65 : 40;
                 let keyColor = Colors.keyboardDefault;
-                let isDisabled = false;
 
                 if(props.correctLetters.includes(key)){
                     keyColor = Colors.correctGuess;
                 } else if(props.incorrectLetters.includes(key)) {
                     keyColor = Colors.incorrectGuess;
                 } else if(props.wrongLetters.includes(key)) {
-                    isDisabled = true;
                     keyColor = Colors.wrongGuess;
                 }
                 
                 return (
                     
-                        <TouchableOpacity onPress={() => onKeyPressed(key)} disabled={isDisabled} key={index} style={[styles.keyboardKey, { width: keyWidth, backgroundColor: keyColor }]}>
+                        <TouchableOpacity onPress={() => onKeyPressed(key)} disabled={props.isGameOver} key={index} style={[styles.keyboardKey, { width: keyWidth, backgroundColor: keyColor }]}>
                             {key === 'delete' ? 
                             <Image source={backspaceIcon} style={[styles.backspaceImage, { width: keyWidth - 40 }]}/> :
                             <Text style={[styles.keyboardFont, { fontSize: keyFontSize }]}>{key}</Text>
@@ -93,7 +91,8 @@ function mapStateToProps(state) {
         correctLetters: state.gameStateReducer.correctLetters,
         incorrectLetters: state.gameStateReducer.incorrectLetters,
         wrongLetters: state.gameStateReducer.wrongLetters,
-        isInvalidGuess: state.gameStateReducer.isInvalidGuess
+        isInvalidGuess: state.gameStateReducer.isInvalidGuess,
+        isGameOver: state.gameStateReducer.isGameOver
     };
 }
 

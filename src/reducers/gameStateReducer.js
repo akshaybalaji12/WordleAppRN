@@ -3,7 +3,7 @@ import { ACTION_TYPES } from "../utils/constants";
 const INITIAL_STATE = { 
 
     isGameOver: false,
-    solution: "champ",
+    solution: "",
     currentRow: 0,
     guesses: [
         [], [], [], [], [], []

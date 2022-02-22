@@ -6,6 +6,8 @@ import * as actions from '../actions';
 import { Colors } from "../utils/constants";
 import GameComponent from "../components/GameComponent";
 
+import { solutions } from "../utils/solutions";
+
 class GameScreen extends React.Component {
 
     constructor(props) {
@@ -17,7 +19,23 @@ class GameScreen extends React.Component {
     }
 
     componentDidMount = () => {
+
+        if(this.props.isGameOver || this.props.solution === "") {
+            this.props.clearState();
+            setTimeout(() => {
+                
+                this.props.setGameStatus(false);
+                let size = solutions.length;
+                let index = Math.floor(Math.random() * size);
+                console.log('In new game');
+                console.log('Solution is ' + solutions[index]);
+                this.props.setSolution(solutions[index]);
+
+            }, 1000);
+        }
+
     }
+
 
     render() {
 
@@ -26,7 +44,16 @@ class GameScreen extends React.Component {
             <View style={styles.container}>
                 <StatusBar backgroundColor={Colors.background} />
                 <Text style={styles.heading}>WORDLE</Text>
-                <GameComponent />
+                {
+                    this.props.solution !== '' &&
+                    <GameComponent />
+                }
+                {
+                    this.props.solution === '' &&
+                    <Text style={[styles.heading, { fontSize: 25, margin: 150 }]}>
+                        Setting up game...
+                    </Text>
+                }
             </View>
 
         )
@@ -37,8 +64,8 @@ class GameScreen extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        guesses: state.gameStateReducer.guesses,
-        currentRow: state.gameStateReducer.currentRow
+        isGameOver: state.gameStateReducer.isGameOver,
+        solution: state.gameStateReducer.solution
     };
 }
 

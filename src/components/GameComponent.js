@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect } from "react";
 import { View, StyleSheet, Text} from "react-native";
 import { connect } from "react-redux";
 import * as actions from '../actions';
@@ -8,10 +9,13 @@ import { width, height } from '../utils/constants';
 import WordRow from "./WordRow";
 import KeyboardRow from './KeyboardRow';
 
+import { solutions } from "../utils/solutions";
+
 const GameComponent = (props) => {
 
     let isInvalidGUess = props.isInvalidGuess;
     let isChancesOver = props.currentRow > 5 && !props.isGameOver;
+    let errorMessage = props.guesses[props.currentRow].length < 5 ? "Not enough letters" : "Not in word list";
 
     const onEnterPressed = () => {
 
@@ -29,49 +33,65 @@ const GameComponent = (props) => {
         let guessStatus = [-1, -1, -1, -1, -1];
         let solution = props.solution.split('');
 
-        if(props.solution === guessLetters.join("")) {
-            guessStatus = [1,1,1,1,1];
-            props.setGuessStatus(props.currentRow, guessStatus);
-            props.setCurrentRow(props.currentRow + 1);
-            props.setGameStatus(true);
-        }
+        if(solutions.includes(guessLetters.join(""))) {
 
-        for(let i=0; i<5; i++) {
-            if(solution[i] === guessLetters[i]) {
-                guessStatus[i] = 1;
-                props.addCorrectLetter(guessLetters[i]);
-                solution[i] = "";
+            if(props.solution === guessLetters.join("")) {
+                guessStatus = [1,1,1,1,1];
+                props.setGuessStatus(props.currentRow, guessStatus);
+                props.setCurrentRow(props.currentRow + 1);
+                props.setGameStatus(true);
             }
-        }
 
-        props.guesses[props.currentRow].forEach((letter, index) => {
-            
-            let correctIndex = props.correctLetters.indexOf(letter);
-            let incorrectIndex = props.incorrectLetters.indexOf(letter);
-            let position = solution.indexOf(letter);
+            for(let i=0; i<5; i++) {
+                if(solution[i] === guessLetters[i]) {
+                    guessStatus[i] = 1;
+                    setTimeout(() => {
+                        props.addCorrectLetter(guessLetters[i]);
+                    }, 1400);
+                    solution[i] = "";
+                }
+            }
 
-            if(position === -1) {
+            props.guesses[props.currentRow].forEach((letter, index) => {
+                
+                let correctIndex = props.correctLetters.indexOf(letter);
+                let incorrectIndex = props.incorrectLetters.indexOf(letter);
+                let position = solution.indexOf(letter);
 
-                if(correctIndex === -1 && incorrectIndex === -1) {
-                    props.addWrongLetter(letter);
+                if(position === -1) {
+
+                    if(correctIndex === -1 && incorrectIndex === -1) {
+                        setTimeout(() => {
+                            if(correctIndex === -1 && incorrectIndex === -1) {
+                                props.addWrongLetter(letter);
+                            }
+                        }, 1400);
+                    }
+
+                } else if(position === index) {
+
+                    //Do nothing
+
+                } else {
+
+                    guessStatus[index] = 0;
+                    solution[position] = "";
+                    setTimeout(() => {
+                        props.addIncorrectLetter(letter);
+                    }, 1400);
+
                 }
 
-            } else if(position === index) {
+            });
+            
+            props.setGuessStatus(props.currentRow, guessStatus);
+            props.setCurrentRow(props.currentRow + 1);
 
-                //Do nothing
+        } else {
 
-            } else {
+            props.setInvalidGuess(true);
 
-                guessStatus[index] = 0;
-                props.addIncorrectLetter(letter);
-                solution[position] = "";
-
-            }
-
-        });
-        
-        props.setGuessStatus(props.currentRow, guessStatus);
-        props.setCurrentRow(props.currentRow + 1);
+        }
 
     }
 
@@ -88,7 +108,7 @@ const GameComponent = (props) => {
             </View>
             {isInvalidGUess ? 
             <View style={styles.errorView}>
-                <Text style={styles.solutionText}>Not enough letters!</Text>
+                <Text style={styles.solutionText}>{errorMessage}</Text>
             </View> 
             : null}
             {isChancesOver ? 
