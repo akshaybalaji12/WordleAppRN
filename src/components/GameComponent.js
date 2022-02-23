@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect } from "react";
+import { useState } from "react";
 import { View, StyleSheet, Text} from "react-native";
 import { connect } from "react-redux";
 import * as actions from '../actions';
@@ -13,9 +13,10 @@ import { solutions } from "../utils/solutions";
 
 const GameComponent = (props) => {
 
-    let isInvalidGUess = props.isInvalidGuess;
+    let isInvalidGuess = props.isInvalidGuess;
     let isChancesOver = props.currentRow > 5 && !props.isGameOver;
-    let errorMessage = props.guesses[props.currentRow].length < 5 ? "Not enough letters" : "Not in word list";
+
+    const [isMessageShown, setMessageShown] = useState(false);
 
     const onEnterPressed = () => {
 
@@ -23,6 +24,42 @@ const GameComponent = (props) => {
             props.setInvalidGuess(true);
         } else {
             checkGuess();
+        }
+
+    }
+
+    const getErrorMessage = () => {
+        
+        return props.guesses[props.currentRow].length < 5 ? "Not enough letters" : "Not in word list";
+
+    }
+
+    const getWinningMessage = () => {
+
+        setTimeout(() => {
+            setMessageShown(false);
+        }, 2000);
+
+        switch(props.currentRow) {
+            
+            case 1:
+                return "Genius";
+                
+            case 2:
+                return "Magnificent";
+                
+            case 3:
+                return "Impressive";
+                
+            case 4:
+                return "Splendid";
+                
+            case 5:
+                return "Great";
+                
+            case 6:
+                return "Phew";
+
         }
 
     }
@@ -39,7 +76,14 @@ const GameComponent = (props) => {
                 guessStatus = [1,1,1,1,1];
                 props.setGuessStatus(props.currentRow, guessStatus);
                 props.setCurrentRow(props.currentRow + 1);
+                guessLetters.forEach(letter => {
+                    props.addCorrectLetter(letter);
+                });
                 props.setGameStatus(true);
+                setMessageShown(true);
+
+                return;
+
             }
 
             for(let i=0; i<5; i++) {
@@ -106,9 +150,14 @@ const GameComponent = (props) => {
                 <WordRow rowId={4} />
                 <WordRow rowId={5} />
             </View>
-            {isInvalidGUess ? 
+            {isInvalidGuess ? 
             <View style={styles.errorView}>
-                <Text style={styles.solutionText}>{errorMessage}</Text>
+                <Text style={styles.solutionText}>{getErrorMessage()}</Text>
+            </View> 
+            : null}
+            {isMessageShown ? 
+            <View style={styles.errorView}>
+                <Text style={styles.solutionText}>{getWinningMessage()}</Text>
             </View> 
             : null}
             {isChancesOver ? 
