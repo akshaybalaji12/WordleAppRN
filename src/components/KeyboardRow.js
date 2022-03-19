@@ -59,9 +59,9 @@ const KeyboardRow = (props) => {
 
                 if(props.correctLetters.includes(key)){
                     keyColor = Colors.correctGuess;
-                } else if(props.incorrectLetters.includes(key)) {
+                } else if(props.incorrectLetters.includes(key) && !props.correctLetters.includes(key)) {
                     keyColor = Colors.incorrectGuess;
-                } else if(props.wrongLetters.includes(key)) {
+                } else if(props.wrongLetters.includes(key) && !props.correctLetters.includes(key)) {
                     keyColor = Colors.wrongGuess;
                 }
                 
@@ -86,13 +86,13 @@ const KeyboardRow = (props) => {
 
 function mapStateToProps(state) {
     return {
-        guesses: state.gameStateReducer.guesses,
-        currentRow: state.gameStateReducer.currentRow,
-        correctLetters: state.gameStateReducer.correctLetters,
-        incorrectLetters: state.gameStateReducer.incorrectLetters,
-        wrongLetters: state.gameStateReducer.wrongLetters,
-        isInvalidGuess: state.gameStateReducer.isInvalidGuess,
-        isGameOver: state.gameStateReducer.isGameOver
+        guesses: state.gameState.guesses,
+        currentRow: state.gameState.currentRow,
+        correctLetters: state.gameState.correctLetters,
+        incorrectLetters: state.gameState.incorrectLetters,
+        wrongLetters: state.gameState.wrongLetters,
+        isInvalidGuess: state.gameState.isInvalidGuess,
+        isGameOver: state.gameState.isGameOver
     };
 }
 

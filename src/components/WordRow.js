@@ -241,14 +241,14 @@ const WordRow = (props) => {
 
 function mapStateToProps(state) {
     return {
-        guesses: state.gameStateReducer.guesses,
-        guessStatus: state.gameStateReducer.guessStatus,
-        currentRow: state.gameStateReducer.currentRow,
-        correctLetters: state.gameStateReducer.correctLetters,
-        incorrectLetters: state.gameStateReducer.incorrectLetters,
-        wrongLetters: state.gameStateReducer.wrongLetters,
-        isInvalidGuess: state.gameStateReducer.isInvalidGuess,
-        isGameOver: state.gameStateReducer.isGameOver
+        guesses: state.gameState.guesses,
+        guessStatus: state.gameState.guessStatus,
+        currentRow: state.gameState.currentRow,
+        correctLetters: state.gameState.correctLetters,
+        incorrectLetters: state.gameState.incorrectLetters,
+        wrongLetters: state.gameState.wrongLetters,
+        isInvalidGuess: state.gameState.isInvalidGuess,
+        isGameOver: state.gameState.isGameOver
     };
 }
 
@@ -260,7 +260,7 @@ export default connect(
 const styles = StyleSheet.create({
 
     container: {
-        backgroundColor: Colors.backgroundColor,
+        backgroundColor: Colors.background,
         height: 80,
         width: width - 20,
         flexDirection: 'row',

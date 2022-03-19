@@ -1,17 +1,20 @@
 import { combineReducers } from 'redux';
-import gameStateReducer from './gameStateReducer';
+import gameState from './gameState';
+import stats from './stats';
 import { ACTION_TYPES } from "../utils/constants";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const reducers = combineReducers({
-    gameStateReducer
+    gameState,
+    stats
 });
 
 const rootReducer = (state, action) => {
 
     if(action === ACTION_TYPES.clearState) {
-        AsyncStorage.removeItem('persist:root');
-        state = undefined;
+        
+        const { stats } = state;
+        state = { stats };
+        
     }
 
     return reducers(state, action);

@@ -18,7 +18,7 @@ export const Colors = {
     incorrectGuessRGB: "rgb(145,127,47)",
     wrongGuessRGB: "rgb(44,48,50)",
     background: "#0e0f10",
-    backgroundRGB: "rgb(14,15,16)",
+    backgroundRGB: "rgba(14,15,16, 0.5)",
     keyboardDefault: "#5e666a",
     outline: "#5e666a"
 
@@ -35,5 +35,13 @@ export const ACTION_TYPES = {
     addGuess: "ADD_GUESS",
     removeGuess: "REMOVE_GUESS",
     isInvalid: "SET_INVALID_GUESS",
-    clearState: "CLEAR_STATE"
+    clearState: "CLEAR_STATE",
+    playedGames: "SET_PLAYED_GAMES",
+    wonGames: "SET_WON_GAMES",
+    currentStreak: "SET_STREAK",
+    maxStreak: "SET_MAX_STREAK",
+    isStatsVisible: "SET_STATS_VISIBLITY",
+    distribution: "SET_DISTRIBUTION",
+    currentDate: "SET_CURRENT_DATE",
+    lastWon: "SET_LAST_WON"
 }

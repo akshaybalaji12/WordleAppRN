@@ -8,13 +8,17 @@ import { Colors, keys } from "../utils/constants";
 import { width, height } from '../utils/constants';
 import WordRow from "./WordRow";
 import KeyboardRow from './KeyboardRow';
+import StatsComponent from "./StatsComponent";
 
 import { solutions } from "../utils/solutions";
+import { guessesSorted } from "../utils/guessesSorted";
+
+import moment from 'moment';
 
 const GameComponent = (props) => {
 
     let isInvalidGuess = props.isInvalidGuess;
-    let isChancesOver = props.currentRow > 5 && !props.isGameOver;
+    let isChancesOver = props.currentRow > 5 && props.isGameOver;
 
     const [isMessageShown, setMessageShown] = useState(false);
 
@@ -38,7 +42,8 @@ const GameComponent = (props) => {
 
         setTimeout(() => {
             setMessageShown(false);
-        }, 2000);
+            props.setVisibility(true);
+        }, 2500);
 
         switch(props.currentRow) {
             
@@ -70,16 +75,41 @@ const GameComponent = (props) => {
         let guessStatus = [-1, -1, -1, -1, -1];
         let solution = props.solution.split('');
 
-        if(solutions.includes(guessLetters.join(""))) {
+        let currentRow = props.currentRow;
+        let wonGames = props.wonGames;
+        let playedGames = props.played;
+        let currentStreak = props.currentStreak;
+        let maxStreak = props.maxStreak;
+        let winCount = props.winDistributions[currentRow] + 1;
+        let payload = {
+            row: currentRow,
+            count: winCount
+        };
+
+        if(solutions.includes(guessLetters.join("")) || guessesSorted.includes(guessLetters.join(""))) {
 
             if(props.solution === guessLetters.join("")) {
+
+                let todayDate = moment().utcOffset('+05:30').format('YYYY-MM-DD');
+
                 guessStatus = [1,1,1,1,1];
                 props.setGuessStatus(props.currentRow, guessStatus);
-                props.setCurrentRow(props.currentRow + 1);
+                props.setCurrentRow(currentRow + 1);
+                props.setWonGames(wonGames + 1);
+                props.setPlayedGames(playedGames + 1);
+                props.setStreak(currentStreak + 1);
+                props.setDistribution(payload);
+
+                if(currentStreak >= maxStreak) {
+                    props.setMaxStreak(currentStreak + 1);
+                }
+
                 guessLetters.forEach(letter => {
                     props.addCorrectLetter(letter);
                 });
+
                 props.setGameStatus(true);
+                props.setLastWon(todayDate);
                 setMessageShown(true);
 
                 return;
@@ -131,6 +161,14 @@ const GameComponent = (props) => {
             props.setGuessStatus(props.currentRow, guessStatus);
             props.setCurrentRow(props.currentRow + 1);
 
+            if(props.currentRow > 5) {
+
+                props.setPlayedGames(props.played + 1);
+                props.setGameStatus(true);
+                props.setStreak(0);
+
+            }
+
         } else {
 
             props.setInvalidGuess(true);
@@ -142,6 +180,7 @@ const GameComponent = (props) => {
     return (
 
         <View style={styles.container}>
+            {props.isStatsVisible && <StatsComponent />}
             <View style={styles.gameView}> 
                 <WordRow rowId={0}/>
                 <WordRow rowId={1} />
@@ -180,13 +219,19 @@ const GameComponent = (props) => {
 
 function mapStateToProps(state) {
     return {
-        isGameOver: state.gameStateReducer.isGameOver,
-        solution: state.gameStateReducer.solution,
-        guesses: state.gameStateReducer.guesses,
-        currentRow: state.gameStateReducer.currentRow,
-        correctLetters: state.gameStateReducer.correctLetters,
-        incorrectLetters: state.gameStateReducer.incorrectLetters,
-        isInvalidGuess: state.gameStateReducer.isInvalidGuess
+        isGameOver: state.gameState.isGameOver,
+        solution: state.gameState.solution,
+        guesses: state.gameState.guesses,
+        currentRow: state.gameState.currentRow,
+        correctLetters: state.gameState.correctLetters,
+        incorrectLetters: state.gameState.incorrectLetters,
+        isInvalidGuess: state.gameState.isInvalidGuess,
+        played: state.stats.playedGames,
+        currentStreak: state.stats.currentStreak,
+        maxStreak: state.stats.maxStreak,
+        wonGames: state.stats.wonGames,
+        winDistributions: state.stats.winDistributions,
+        isStatsVisible: state.stats.isStatsVisible,
     };
 }
 

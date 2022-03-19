@@ -4,9 +4,12 @@ import { connect } from "react-redux";
 import * as actions from '../actions';
 
 import { Colors } from "../utils/constants";
+import AppHeader from "../components/AppHeader";
 import GameComponent from "../components/GameComponent";
 
 import { solutions } from "../utils/solutions";
+
+import moment from 'moment';
 
 class GameScreen extends React.Component {
 
@@ -20,8 +23,32 @@ class GameScreen extends React.Component {
 
     componentDidMount = () => {
 
-        if(this.props.isGameOver || this.props.solution === "") {
+        let todayDate = moment().utcOffset('+05:30').format('YYYY-MM-DD');
+        
+        if(this.props.currentDate === todayDate && this.props.isGameOver) {
+        
+            setTimeout(() => {
+                
+                this.props.setVisibility(true);
+
+            }, 2000);
+
+        }
+
+        if(this.props.currentDate !== todayDate || this.props.solution === "") {
+
+            if(!this.props.isGameOver && this.props.solution !== "") {
+                this.props.setPlayedGames(this.props.played + 1);
+                this.props.setStreak(0);
+            }
+
             this.props.clearState();
+            this.props.setCurrentDate(todayDate);
+            let difference = moment.duration(moment(todayDate).diff(moment(this.props.lastWon)));
+            if(difference > 2) {
+                this.props.setStreak(0);
+            }
+
             setTimeout(() => {
                 
                 this.props.setGameStatus(false);
@@ -36,6 +63,23 @@ class GameScreen extends React.Component {
 
     }
 
+    componentDidUpdate = (prevProps) => {
+
+        if(prevProps.currentDate != this.props.currentDate && prevProps.solution !== "") {
+
+            this.props.clearState();
+            this.props.setGameStatus(false);
+            let size = solutions.length;
+            let index = Math.floor(Math.random() * size);
+            console.log('In new game');
+            console.log('Solution is ' + solutions[index]);
+            this.props.setSolution(solutions[index]);
+            this.props.setVisibility(false);
+
+        }
+
+    }
+
 
     render() {
 
@@ -43,7 +87,7 @@ class GameScreen extends React.Component {
 
             <View style={styles.container}>
                 <StatusBar backgroundColor={Colors.background} />
-                <Text style={styles.heading}>WORDLE</Text>
+                <AppHeader />
                 {
                     this.props.solution !== '' &&
                     <GameComponent />
@@ -64,8 +108,11 @@ class GameScreen extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        isGameOver: state.gameStateReducer.isGameOver,
-        solution: state.gameStateReducer.solution
+        isGameOver: state.gameState.isGameOver,
+        solution: state.gameState.solution,
+        lastWon: state.stats.lastWon,
+        currentDate: state.stats.currentDate,
+        played: state.stats.playedGames,
     };
 }
 
