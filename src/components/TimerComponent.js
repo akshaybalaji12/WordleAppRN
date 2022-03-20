@@ -5,9 +5,12 @@ import { connect } from "react-redux";
 import * as actions from '../actions';
 
 import moment from 'moment';
-import { Colors } from "../utils/constants";
+import { Colors, ColorModes } from "../utils/constants";
 
 const TimerComponent = (props) => {
+    
+    const contrast = props.isContrastMode ? ColorModes.contrast : ColorModes.nonContrast;
+    const theme = props.isDarkMode ? { ...ColorModes.dark, ...contrast } : { ...ColorModes.light, ...contrast }
 
     let todayDate = moment().format('YYYY-MM-DD HH:mm:ss');
     const tomorrowDate = moment().add(1, 'days').format('YYYY-MM-DD').toString() + ' 00:00:00';
@@ -53,14 +56,14 @@ const TimerComponent = (props) => {
 
     return (
 
-            <View style={styles.container}>
-                <Text style={[styles.text, { fontSize: 20, textTransform: 'uppercase' }]}>Next Wordle In</Text>
-                <View style={styles.timerView}>
-                        <Text style={[styles.text, { fontSize: 20 }]}>{remainingTime.hours < 10 ? `0${remainingTime.hours}` : remainingTime.hours}</Text>
-                        <Text style={[styles.text, { fontSize: 20 }]}>:</Text>
-                        <Text style={[styles.text, { fontSize: 20 }]}>{remainingTime.minutes < 10 ? `0${remainingTime.minutes}` : remainingTime.minutes}</Text>
-                        <Text style={[styles.text, { fontSize: 20 }]}>:</Text>
-                        <Text style={[styles.text, { fontSize: 20 }]}>{remainingTime.seconds < 10 ? `0${remainingTime.seconds}` : remainingTime.seconds}</Text>
+            <View style={styles(theme).container}>
+                <Text style={[styles(theme).text, { fontSize: 20, textTransform: 'uppercase' }]}>Next Wordle In</Text>
+                <View style={styles(theme).timerView}>
+                        <Text style={[styles(theme).text, { fontSize: 20 }]}>{remainingTime.hours < 10 ? `0${remainingTime.hours}` : remainingTime.hours}</Text>
+                        <Text style={[styles(theme).text, { fontSize: 20 }]}>:</Text>
+                        <Text style={[styles(theme).text, { fontSize: 20 }]}>{remainingTime.minutes < 10 ? `0${remainingTime.minutes}` : remainingTime.minutes}</Text>
+                        <Text style={[styles(theme).text, { fontSize: 20 }]}>:</Text>
+                        <Text style={[styles(theme).text, { fontSize: 20 }]}>{remainingTime.seconds < 10 ? `0${remainingTime.seconds}` : remainingTime.seconds}</Text>
                 </View>
             </View>
 
@@ -70,6 +73,8 @@ const TimerComponent = (props) => {
 
 function mapStateToProps(state) {
     return {
+        isDarkMode: state.settings.isDarkMode,
+        isContrastMode: state.settings.isContrastMode
     };
 }
 
@@ -78,7 +83,7 @@ export default connect(
     actions
 )(TimerComponent);
 
-const styles = StyleSheet.create({
+const styles = (theme) => StyleSheet.create({
 
     container: {
         flex: 1,
@@ -96,7 +101,7 @@ const styles = StyleSheet.create({
 
     text: {
         fontFamily: 'ProductSans',
-        color: Colors.white,
+        color: theme.white,
         textAlign: 'center',
         margin: 2
     }

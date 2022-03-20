@@ -4,11 +4,12 @@ import { View, StyleSheet, Text} from "react-native";
 import { connect } from "react-redux";
 import * as actions from '../actions';
 
-import { Colors, keys } from "../utils/constants";
+import { Colors, keys, ColorModes } from "../utils/constants";
 import { width, height } from '../utils/constants';
 import WordRow from "./WordRow";
 import KeyboardRow from './KeyboardRow';
 import StatsComponent from "./StatsComponent";
+import SettingsComponent from "./SettingsComponent";
 
 import { solutions } from "../utils/solutions";
 import { guessesSorted } from "../utils/guessesSorted";
@@ -16,6 +17,9 @@ import { guessesSorted } from "../utils/guessesSorted";
 import moment from 'moment';
 
 const GameComponent = (props) => {
+    
+    const contrast = props.isContrastMode ? ColorModes.contrast : ColorModes.nonContrast;
+    const theme = props.isDarkMode ? { ...ColorModes.dark, ...contrast } : { ...ColorModes.light, ...contrast }
 
     let isInvalidGuess = props.isInvalidGuess;
     let isChancesOver = props.currentRow > 5 && props.isGameOver;
@@ -148,11 +152,15 @@ const GameComponent = (props) => {
 
                 } else {
 
-                    guessStatus[index] = 0;
-                    solution[position] = "";
-                    setTimeout(() => {
-                        props.addIncorrectLetter(letter);
-                    }, 1400);
+                    if(guessStatus[index] != 1) {
+
+                        guessStatus[index] = 0;
+                        solution[position] = "";
+                        setTimeout(() => {
+                            props.addIncorrectLetter(letter);
+                        }, 1400);
+
+                    }
 
                 }
 
@@ -179,9 +187,10 @@ const GameComponent = (props) => {
 
     return (
 
-        <View style={styles.container}>
+        <View style={styles(theme).container}>
             {props.isStatsVisible && <StatsComponent />}
-            <View style={styles.gameView}> 
+            {props.isSettingsVisible && <SettingsComponent />}
+            <View style={styles(theme).gameView}> 
                 <WordRow rowId={0}/>
                 <WordRow rowId={1} />
                 <WordRow rowId={2} />
@@ -190,21 +199,21 @@ const GameComponent = (props) => {
                 <WordRow rowId={5} />
             </View>
             {isInvalidGuess ? 
-            <View style={styles.errorView}>
-                <Text style={styles.solutionText}>{getErrorMessage()}</Text>
+            <View style={styles(theme).errorView}>
+                <Text style={styles(theme).solutionText}>{getErrorMessage()}</Text>
             </View> 
             : null}
             {isMessageShown ? 
-            <View style={styles.errorView}>
-                <Text style={styles.solutionText}>{getWinningMessage()}</Text>
+            <View style={styles(theme).errorView}>
+                <Text style={styles(theme).solutionText}>{getWinningMessage()}</Text>
             </View> 
             : null}
             {isChancesOver ? 
-            <View style={styles.solutionView}>
-                <Text style={styles.solutionText}>The solution is {props.solution.toUpperCase()}</Text>
+            <View style={styles(theme).solutionView}>
+                <Text style={styles(theme).solutionText}>The solution is {props.solution.toUpperCase()}</Text>
             </View> 
             : null}
-            <View style={styles.keyboardContainer}>
+            <View style={styles(theme).keyboardContainer}>
                 {keys.map((keyRows, index) => {
                     return(
                         <KeyboardRow onEnterPressed={onEnterPressed} key={index} rowItems={keyRows}/>
@@ -232,6 +241,9 @@ function mapStateToProps(state) {
         wonGames: state.stats.wonGames,
         winDistributions: state.stats.winDistributions,
         isStatsVisible: state.stats.isStatsVisible,
+        isSettingsVisible: state.settings.isSettingsVisible,
+        isDarkMode: state.settings.isDarkMode,
+        isContrastMode: state.settings.isContrastMode
     };
 }
 
@@ -240,11 +252,11 @@ export default connect(
     actions
 )(GameComponent);
 
-const styles = StyleSheet.create({
+const styles = (theme) => StyleSheet.create({
     
     container: {
         flex: 1,
-        backgroundColor: Colors.background,
+        backgroundColor: theme.background,
         flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -262,7 +274,7 @@ const styles = StyleSheet.create({
         padding: 15,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: Colors.outline,
+        backgroundColor: theme.outline,
         borderRadius: 5
     },
 
@@ -276,12 +288,12 @@ const styles = StyleSheet.create({
     solutionText: {
         fontFamily: 'ProductSansBold',
         fontSize: 20,
-        color: Colors.white,
+        color: theme.white,
         textAlign: 'center'
     },
     
     keyboardContainer: {
-        backgroundColor: Colors.background,
+        backgroundColor: theme.background,
         height: height / 5,
         width: width,
         paddingStart: 5,

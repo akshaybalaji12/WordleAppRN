@@ -4,9 +4,12 @@ import { connect } from "react-redux";
 import * as actions from '../actions';
 
 import { width, height } from '../utils/constants';
-import { Colors } from "../utils/constants";
+import { Colors, ColorModes } from "../utils/constants";
 
 const KeyboardRow = (props) => {
+    
+    const contrast = props.isContrastMode ? ColorModes.contrast : ColorModes.nonContrast;
+    const theme = props.isDarkMode ? { ...ColorModes.dark, ...contrast } : { ...ColorModes.light, ...contrast }
 
     const backspaceIcon = require('../../img/backspace_white.png');
 
@@ -49,28 +52,28 @@ const KeyboardRow = (props) => {
 
     return (
 
-        <View style={styles.container}>
+        <View style={styles(theme).container}>
 
             {props.rowItems.map((key, index) => {
 
                 let keyFontSize = (key === 'enter') ? 16 : 18;
                 let keyWidth = (key === 'enter' || key === 'delete') ? 65 : 40;
-                let keyColor = Colors.keyboardDefault;
+                let keyColor = theme.keyboardDefault;
 
                 if(props.correctLetters.includes(key)){
-                    keyColor = Colors.correctGuess;
+                    keyColor = theme.correctGuess;
                 } else if(props.incorrectLetters.includes(key) && !props.correctLetters.includes(key)) {
-                    keyColor = Colors.incorrectGuess;
+                    keyColor = theme.incorrectGuess;
                 } else if(props.wrongLetters.includes(key) && !props.correctLetters.includes(key)) {
-                    keyColor = Colors.wrongGuess;
+                    keyColor = theme.wrongGuess;
                 }
                 
                 return (
                     
-                        <TouchableOpacity onPress={() => onKeyPressed(key)} disabled={props.isGameOver} key={index} style={[styles.keyboardKey, { width: keyWidth, backgroundColor: keyColor }]}>
+                        <TouchableOpacity onPress={() => onKeyPressed(key)} disabled={props.isGameOver} key={index} style={[styles(theme).keyboardKey, { width: keyWidth, backgroundColor: keyColor }]}>
                             {key === 'delete' ? 
-                            <Image source={backspaceIcon} style={[styles.backspaceImage, { width: keyWidth - 40 }]}/> :
-                            <Text style={[styles.keyboardFont, { fontSize: keyFontSize }]}>{key}</Text>
+                            <Image source={backspaceIcon} style={[styles(theme).backspaceImage, { width: keyWidth - 40 }]}/> :
+                            <Text style={[styles(theme).keyboardFont, { fontSize: keyFontSize }]}>{key}</Text>
                             }
                         </TouchableOpacity>
 
@@ -92,7 +95,9 @@ function mapStateToProps(state) {
         incorrectLetters: state.gameState.incorrectLetters,
         wrongLetters: state.gameState.wrongLetters,
         isInvalidGuess: state.gameState.isInvalidGuess,
-        isGameOver: state.gameState.isGameOver
+        isGameOver: state.gameState.isGameOver,
+        isDarkMode: state.settings.isDarkMode,
+        isContrastMode: state.settings.isContrastMode
     };
 }
 
@@ -101,10 +106,10 @@ export default connect(
     actions
 )(KeyboardRow);
 
-const styles = StyleSheet.create({
+const styles = (theme) => StyleSheet.create({
 
     container: {
-        backgroundColor: Colors.backgroundColor,
+        backgroundColor: theme.backgroundColor,
         height: (height / 15),
         width: width,
         flexDirection: 'row',

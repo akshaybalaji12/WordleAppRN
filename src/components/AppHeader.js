@@ -4,9 +4,12 @@ import { connect } from "react-redux";
 import * as actions from '../actions';
 
 import { width, height } from '../utils/constants';
-import { Colors } from "../utils/constants";
+import { Colors, ColorModes } from "../utils/constants";
 
 const AppHeader = (props) => {
+    
+    const contrast = props.isContrastMode ? ColorModes.contrast : ColorModes.nonContrast;
+    const theme = props.isDarkMode ? { ...ColorModes.dark, ...contrast } : { ...ColorModes.light, ...contrast }
 
     const settingsIcon = require('../../img/settings_white.png');
     const statsIcon = require('../../img/stats_white.png');
@@ -17,34 +20,42 @@ const AppHeader = (props) => {
 
     }
 
+
+    const onSettingsPressed = () => {
+
+        props.setSettingsVisibility(true);
+
+    }
+
     return (
 
-        <View style={styles.container}>
+        <View style={styles(theme).container}>
 
-            <View style={styles.imageContainer}/>
+            <View style={styles(theme).imageContainer}/>
 
-            <Text style={styles.headerFont}>Wordle</Text>
+            <Text style={styles(theme).headerFont}>Wordle</Text>
 
-            <View style={styles.imageContainer}>
+            <View style={styles(theme).imageContainer}>
                 <TouchableOpacity onPress={onStatPressed} style={{ width: 30, height: 30 }}>
-                    <Image source={statsIcon} style={styles.image}/>
+                    <Image source={statsIcon} style={styles(theme).image}/>
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={{ width: 30, height: 30 }}>
-                    <Image source={settingsIcon} style={styles.image}/>
+                <TouchableOpacity onPress={onSettingsPressed} style={{ width: 30, height: 30 }}>
+                    <Image source={settingsIcon} style={styles(theme).image}/>
                 </TouchableOpacity>
             </View>
                     
             
             
         </View>
-
     )
 
 }
 
 function mapStateToProps(state) {
     return {
+        isDarkMode: state.settings.isDarkMode,
+        isContrastMode: state.settings.isContrastMode
     };
 }
 
@@ -53,10 +64,10 @@ export default connect(
     actions
 )(AppHeader);
 
-const styles = StyleSheet.create({
+const styles = (theme) => StyleSheet.create({
 
     container: {
-        backgroundColor: Colors.background,
+        backgroundColor: theme.background,
         height: 50,
         width: width,
         flexDirection: 'row',
@@ -66,7 +77,7 @@ const styles = StyleSheet.create({
 
     headerFont: {
         fontFamily: 'ProductSansBold',
-        color: Colors.white,
+        color: theme.white,
         textAlign: 'center',
         fontSize: 30
     },
@@ -84,6 +95,7 @@ const styles = StyleSheet.create({
         width: 30,
         padding: 5,
         resizeMode: 'contain',
+        tintColor: theme.white
     }
 
 })

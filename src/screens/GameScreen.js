@@ -3,7 +3,7 @@ import { View, StatusBar, StyleSheet, Text } from "react-native";
 import { connect } from "react-redux";
 import * as actions from '../actions';
 
-import { Colors } from "../utils/constants";
+import { Colors, ColorModes } from "../utils/constants";
 import AppHeader from "../components/AppHeader";
 import GameComponent from "../components/GameComponent";
 
@@ -68,6 +68,7 @@ class GameScreen extends React.Component {
         if(prevProps.currentDate != this.props.currentDate && prevProps.solution !== "") {
 
             this.props.clearState();
+            this.props.setSolution("");
             this.props.setGameStatus(false);
             let size = solutions.length;
             let index = Math.floor(Math.random() * size);
@@ -82,10 +83,13 @@ class GameScreen extends React.Component {
 
 
     render() {
+    
+        const contrast = this.props.isContrastMode ? ColorModes.contrast : ColorModes.nonContrast;
+        const theme = this.props.isDarkMode ? { ...ColorModes.dark, ...contrast } : { ...ColorModes.light, ...contrast }
 
         return (
 
-            <View style={styles.container}>
+            <View style={styles(theme).container}>
                 <StatusBar backgroundColor={Colors.background} />
                 <AppHeader />
                 {
@@ -94,7 +98,7 @@ class GameScreen extends React.Component {
                 }
                 {
                     this.props.solution === '' &&
-                    <Text style={[styles.heading, { fontSize: 25, margin: 150 }]}>
+                    <Text style={[styles(theme).heading, { fontSize: 25, margin: 150 }]}>
                         Setting up game...
                     </Text>
                 }
@@ -113,6 +117,8 @@ function mapStateToProps(state) {
         lastWon: state.stats.lastWon,
         currentDate: state.stats.currentDate,
         played: state.stats.playedGames,
+        isDarkMode: state.settings.isDarkMode,
+        isContrastMode: state.settings.isContrastMode
     };
 }
 
@@ -122,18 +128,18 @@ export default connect(
 )(GameScreen);
 
 
-const styles = StyleSheet.create({
+const styles = (theme) => StyleSheet.create({
     
     container: {
         flex: 1,
-        backgroundColor: Colors.background,
+        backgroundColor: theme.background,
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
     },
 
     heading: {
-        color: Colors.white,
+        color: theme.white,
         fontSize: 30,
         fontFamily: 'ProductSansBold',
         textAlign: 'center',

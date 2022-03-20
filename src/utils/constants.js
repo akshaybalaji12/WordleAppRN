@@ -14,13 +14,44 @@ export const Colors = {
     correctGuess: "#42713e",
     incorrectGuess: "#917f2f",
     wrongGuess: "#2c3032",
-    correctGuessRGB: "rgb(66,113,62)",
-    incorrectGuessRGB: "rgb(145,127,47)",
-    wrongGuessRGB: "rgb(44,48,50)",
     background: "#0e0f10",
     backgroundRGB: "rgba(14,15,16, 0.5)",
     keyboardDefault: "#5e666a",
     outline: "#5e666a"
+
+}
+
+export const ColorModes = {
+
+    dark: {
+        white: "#fafafa",
+        wrongGuess: "#2c3032",
+        background: "#0e0f10",
+        backgroundRGB: "rgba(14,15,16, 0.5)",
+        keyboardDefault: "#5e666a",
+        outline: "#5e666a"
+    },
+
+    contrast: {
+        correctGuess: "#f5793a",
+        incorrectGuess: "#85c0f9",
+        switchTrue: "#7a3c1d"
+    },
+
+    nonContrast: {
+        correctGuess: "#42713e",
+        incorrectGuess: "#917f2f",
+        switchTrue: "#20381e"
+    },
+
+    light: {
+        white: "#000000",
+        wrongGuess: "#2c3032",
+        background: "#fafafa",
+        backgroundRGB: "rgba(255,255,255, 0.5)",
+        keyboardDefault: "#5e666a",
+        outline: "#000000"
+    }
 
 }
 
@@ -41,6 +72,10 @@ export const ACTION_TYPES = {
     currentStreak: "SET_STREAK",
     maxStreak: "SET_MAX_STREAK",
     isStatsVisible: "SET_STATS_VISIBLITY",
+    isSettingsVisible: "SET_SETTINGS_VISIBILITY",
+    hardMode: "SET_HARD_MODE",
+    darkMode: "SET_DARK_MODE",
+    contrastMode: "SET_CONTRAST_MODE",
     distribution: "SET_DISTRIBUTION",
     currentDate: "SET_CURRENT_DATE",
     lastWon: "SET_LAST_WON"

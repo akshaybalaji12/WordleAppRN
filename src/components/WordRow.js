@@ -5,9 +5,12 @@ import { connect } from "react-redux";
 import * as actions from '../actions';
 
 import { width, height } from '../utils/constants';
-import { Colors } from "../utils/constants";
+import { Colors, ColorModes } from "../utils/constants";
 
 const WordRow = (props) => {
+    
+    const contrast = props.isContrastMode ? ColorModes.contrast : ColorModes.nonContrast;
+    const theme = props.isDarkMode ? { ...ColorModes.dark, ...contrast } : { ...ColorModes.light, ...contrast }
 
     const [shakeValue] = useState(new Animated.Value(0));
     let flipValuesArray = [];
@@ -16,8 +19,8 @@ const WordRow = (props) => {
     let interpolatedValuesBack = [];
 
     let colorFront = {
-        backgroundColor: Colors.background,
-        borderColor: Colors.outline
+        backgroundColor: theme.background,
+        borderColor: theme.outline
     }
 
     for(let i=0;i<5;i++) {
@@ -80,8 +83,8 @@ const WordRow = (props) => {
     const getColorsBack = (index) => {
 
         let colors = {
-            backgroundColor: Colors.wrongGuess,
-            borderColor: Colors.wrongGuess
+            backgroundColor: theme.wrongGuess,
+            borderColor: theme.wrongGuess
         }
 
         try {
@@ -89,23 +92,23 @@ const WordRow = (props) => {
             switch(status) {
 
                 case -1:
-                    colors.backgroundColor = Colors.wrongGuess;
-                    colors.borderColor = Colors.wrongGuess;
+                    colors.backgroundColor = theme.wrongGuess;
+                    colors.borderColor = theme.wrongGuess;
                     break;
 
                 case 0:
-                    colors.backgroundColor = Colors.incorrectGuess;
-                    colors.borderColor = Colors.incorrectGuess;
+                    colors.backgroundColor = theme.incorrectGuess;
+                    colors.borderColor = theme.incorrectGuess;
                     break;
                 
                 case 1:
-                    colors.backgroundColor = Colors.correctGuess;
-                    colors.borderColor = Colors.correctGuess;
+                    colors.backgroundColor = theme.correctGuess;
+                    colors.borderColor = theme.correctGuess;
                     break;
 
                 default:
-                    colors.backgroundColor = Colors.wrongGuess;
-                    colors.borderColor = Colors.wrongGuess;
+                    colors.backgroundColor = theme.wrongGuess;
+                    colors.borderColor = theme.wrongGuess;
                     break;
 
             }
@@ -186,50 +189,50 @@ const WordRow = (props) => {
 
     return (
 
-        <Animated.View style={[styles.container, { transform: [{translateX: shakeValue}] }]}>
+        <Animated.View style={[styles(theme).container, { transform: [{translateX: shakeValue}] }]}>
 
-            <Animated.View style={[styles.letterViewContainer, { transform: [{ translateY: translateValues[0] }] }]}>
-                <Animated.View style={[styles.frontView, { transform: [{rotateX: interpolatedValuesFront[0]}] }, colorFront]}>
-                    <Text style={styles.letterText}>{getLetter(0)}</Text>
+            <Animated.View style={[styles(theme).letterViewContainer, { transform: [{ translateY: translateValues[0] }] }]}>
+                <Animated.View style={[styles(theme).frontView, { transform: [{rotateX: interpolatedValuesFront[0]}] }, colorFront]}>
+                    <Text style={styles(theme).letterText}>{getLetter(0)}</Text>
                 </Animated.View>
-                <Animated.View style={[styles.backView, { transform: [{rotateX: interpolatedValuesBack[0]}] }, getColorsBack(0)]}>
-                    <Text style={styles.letterText}>{getLetter(0)}</Text>
+                <Animated.View style={[styles(theme).backView, { transform: [{rotateX: interpolatedValuesBack[0]}] }, getColorsBack(0)]}>
+                    <Text style={styles(theme).letterText}>{getLetter(0)}</Text>
                 </Animated.View>
             </Animated.View>
 
-            <Animated.View style={[styles.letterViewContainer, { transform: [{ translateY: translateValues[1] }] }]}>
-                <Animated.View style={[styles.frontView, { transform: [{rotateX: interpolatedValuesFront[1]}] }, colorFront]}>
-                    <Text style={styles.letterText}>{getLetter(1)}</Text>
+            <Animated.View style={[styles(theme).letterViewContainer, { transform: [{ translateY: translateValues[1] }] }]}>
+                <Animated.View style={[styles(theme).frontView, { transform: [{rotateX: interpolatedValuesFront[1]}] }, colorFront]}>
+                    <Text style={styles(theme).letterText}>{getLetter(1)}</Text>
                 </Animated.View>
-                <Animated.View style={[styles.backView, { transform: [{rotateX: interpolatedValuesBack[1]}] }, getColorsBack(1)]}>
-                    <Text style={styles.letterText}>{getLetter(1)}</Text>
+                <Animated.View style={[styles(theme).backView, { transform: [{rotateX: interpolatedValuesBack[1]}] }, getColorsBack(1)]}>
+                    <Text style={styles(theme).letterText}>{getLetter(1)}</Text>
                 </Animated.View>
             </Animated.View>
             
-            <Animated.View style={[styles.letterViewContainer, { transform: [{ translateY: translateValues[2] }] }]}>
-                <Animated.View style={[styles.frontView, { transform: [{rotateX: interpolatedValuesFront[2]}] }, colorFront]}>
-                    <Text style={styles.letterText}>{getLetter(2)}</Text>
+            <Animated.View style={[styles(theme).letterViewContainer, { transform: [{ translateY: translateValues[2] }] }]}>
+                <Animated.View style={[styles(theme).frontView, { transform: [{rotateX: interpolatedValuesFront[2]}] }, colorFront]}>
+                    <Text style={styles(theme).letterText}>{getLetter(2)}</Text>
                 </Animated.View>
-                <Animated.View style={[styles.backView, { transform: [{rotateX: interpolatedValuesBack[2]}] }, getColorsBack(2)]}>
-                    <Text style={styles.letterText}>{getLetter(2)}</Text>
+                <Animated.View style={[styles(theme).backView, { transform: [{rotateX: interpolatedValuesBack[2]}] }, getColorsBack(2)]}>
+                    <Text style={styles(theme).letterText}>{getLetter(2)}</Text>
                 </Animated.View>
             </Animated.View>
             
-            <Animated.View style={[styles.letterViewContainer, { transform: [{ translateY: translateValues[3] }] }]}>
-                <Animated.View style={[styles.frontView, { transform: [{rotateX: interpolatedValuesFront[3]}] }, colorFront]}>
-                    <Text style={styles.letterText}>{getLetter(3)}</Text>
+            <Animated.View style={[styles(theme).letterViewContainer, { transform: [{ translateY: translateValues[3] }] }]}>
+                <Animated.View style={[styles(theme).frontView, { transform: [{rotateX: interpolatedValuesFront[3]}] }, colorFront]}>
+                    <Text style={styles(theme).letterText}>{getLetter(3)}</Text>
                 </Animated.View>
-                <Animated.View style={[styles.backView, { transform: [{rotateX: interpolatedValuesBack[3]}] }, getColorsBack(3)]}>
-                    <Text style={styles.letterText}>{getLetter(3)}</Text>
+                <Animated.View style={[styles(theme).backView, { transform: [{rotateX: interpolatedValuesBack[3]}] }, getColorsBack(3)]}>
+                    <Text style={styles(theme).letterText}>{getLetter(3)}</Text>
                 </Animated.View>
             </Animated.View>
 
-            <Animated.View style={[styles.letterViewContainer, { transform: [{ translateY: translateValues[4] }] }]}>
-                <Animated.View style={[styles.frontView, { transform: [{rotateX: interpolatedValuesFront[4]}] }, colorFront]}>
-                    <Text style={styles.letterText}>{getLetter(4)}</Text>
+            <Animated.View style={[styles(theme).letterViewContainer, { transform: [{ translateY: translateValues[4] }] }]}>
+                <Animated.View style={[styles(theme).frontView, { transform: [{rotateX: interpolatedValuesFront[4]}] }, colorFront]}>
+                    <Text style={styles(theme).letterText}>{getLetter(4)}</Text>
                 </Animated.View>
-                <Animated.View style={[styles.backView, { transform: [{rotateX: interpolatedValuesBack[4]}] }, getColorsBack(4)]}>
-                    <Text style={styles.letterText}>{getLetter(4)}</Text>
+                <Animated.View style={[styles(theme).backView, { transform: [{rotateX: interpolatedValuesBack[4]}] }, getColorsBack(4)]}>
+                    <Text style={styles(theme).letterText}>{getLetter(4)}</Text>
                 </Animated.View>
             </Animated.View>
 
@@ -248,7 +251,9 @@ function mapStateToProps(state) {
         incorrectLetters: state.gameState.incorrectLetters,
         wrongLetters: state.gameState.wrongLetters,
         isInvalidGuess: state.gameState.isInvalidGuess,
-        isGameOver: state.gameState.isGameOver
+        isGameOver: state.gameState.isGameOver,
+        isDarkMode: state.settings.isDarkMode,
+        isContrastMode: state.settings.isContrastMode
     };
 }
 
@@ -257,10 +262,10 @@ export default connect(
     actions
 )(WordRow);
 
-const styles = StyleSheet.create({
+const styles = (theme) => StyleSheet.create({
 
     container: {
-        backgroundColor: Colors.background,
+        backgroundColor: theme.background,
         height: 80,
         width: width - 20,
         flexDirection: 'row',
