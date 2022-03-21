@@ -196,7 +196,7 @@ const WordRow = (props) => {
                     <Text style={styles(theme).letterText}>{getLetter(0)}</Text>
                 </Animated.View>
                 <Animated.View style={[styles(theme).backView, { transform: [{rotateX: interpolatedValuesBack[0]}] }, getColorsBack(0)]}>
-                    <Text style={styles(theme).letterText}>{getLetter(0)}</Text>
+                    <Text style={styles(theme).letterTextBack}>{getLetter(0)}</Text>
                 </Animated.View>
             </Animated.View>
 
@@ -205,7 +205,7 @@ const WordRow = (props) => {
                     <Text style={styles(theme).letterText}>{getLetter(1)}</Text>
                 </Animated.View>
                 <Animated.View style={[styles(theme).backView, { transform: [{rotateX: interpolatedValuesBack[1]}] }, getColorsBack(1)]}>
-                    <Text style={styles(theme).letterText}>{getLetter(1)}</Text>
+                    <Text style={styles(theme).letterTextBack}>{getLetter(1)}</Text>
                 </Animated.View>
             </Animated.View>
             
@@ -214,7 +214,7 @@ const WordRow = (props) => {
                     <Text style={styles(theme).letterText}>{getLetter(2)}</Text>
                 </Animated.View>
                 <Animated.View style={[styles(theme).backView, { transform: [{rotateX: interpolatedValuesBack[2]}] }, getColorsBack(2)]}>
-                    <Text style={styles(theme).letterText}>{getLetter(2)}</Text>
+                    <Text style={styles(theme).letterTextBack}>{getLetter(2)}</Text>
                 </Animated.View>
             </Animated.View>
             
@@ -223,7 +223,7 @@ const WordRow = (props) => {
                     <Text style={styles(theme).letterText}>{getLetter(3)}</Text>
                 </Animated.View>
                 <Animated.View style={[styles(theme).backView, { transform: [{rotateX: interpolatedValuesBack[3]}] }, getColorsBack(3)]}>
-                    <Text style={styles(theme).letterText}>{getLetter(3)}</Text>
+                    <Text style={styles(theme).letterTextBack}>{getLetter(3)}</Text>
                 </Animated.View>
             </Animated.View>
 
@@ -232,7 +232,7 @@ const WordRow = (props) => {
                     <Text style={styles(theme).letterText}>{getLetter(4)}</Text>
                 </Animated.View>
                 <Animated.View style={[styles(theme).backView, { transform: [{rotateX: interpolatedValuesBack[4]}] }, getColorsBack(4)]}>
-                    <Text style={styles(theme).letterText}>{getLetter(4)}</Text>
+                    <Text style={styles(theme).letterTextBack}>{getLetter(4)}</Text>
                 </Animated.View>
             </Animated.View>
 
@@ -302,6 +302,14 @@ const styles = (theme) => StyleSheet.create({
     },
 
     letterText: {
+        fontFamily: 'ProductSansBold',
+        color: theme.white,
+        textAlign: 'center',
+        fontSize: 40,
+        textTransform: 'uppercase'
+    },
+
+    letterTextBack: {
         fontFamily: 'ProductSansBold',
         color: Colors.white,
         textAlign: 'center',
